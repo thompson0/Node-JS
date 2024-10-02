@@ -3,12 +3,12 @@ const cam = document.querySelector('#video');
 
 //PUXAR O MODELOS DA INTERNET PORQUE O LOCAL NAO TAVA FUNCIONANDO AI DEPOIS DE PUXAR LIGAR A CAMERA
 Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights').
-    faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights').
-    faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights').
-    faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights').
+    faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
+    faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
+    faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
+    faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
     faceapi.nets.ssdMobilenetv1.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights')
-]).then(startVideo)
+]).then(startVideo).catch(err => console.error('Erro ao carregar modelos:', err));
 
 async function startVideo() {
     const constraints = { video: true };
@@ -24,10 +24,10 @@ async function startVideo() {
     }
 }
 
-//FACE RECONIGTION PARA ADICIONAR MAIS PESSOAS SO ADICIONAR MAIS UMA PASTA COM NOME DA PESSOA NA ARRAY LABELS (MINIMO DE FOTOS 2)
+//FACE RECONIGTION PARA ADICIONAR MAIS PESSOAS SO ADICIONAR MAIS UMA PASTA COM NOME DA PESSOA NA ARRAY E NA PASTA LABELS (MINIMO DE FOTOS 2, CASO  QUEIRA COLOCAR MAISS FOTOS PARAN UM PRECISAO MELHOR AUMENTE O NUMERO MAXIMO NO LOOP ABAIXO)
 
 async function loadLabeledImages() {
-    const labels = ['Thompson'];
+    const labels = ['Thompson','Kaneto','JV','Guilherme','Nibo','Thomas'];
     return Promise.all(
         labels.map(async label => {
             const descriptions = [];
@@ -76,7 +76,7 @@ cam.addEventListener('play', async () => {
 
         if (resizedDetections.length > 0) {
             faceapi.draw.drawDetections(canvas, resizedDetections);
-            faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+            
             faceapi.draw.drawFaceExpressions(canvas, resizedDetections); 
 
             resizedDetections.forEach(detection => {
