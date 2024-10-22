@@ -1,16 +1,19 @@
 const image_input = document.querySelector("#image_input")
-var uploaded_image ="";
+var uploaded_image =[];
 
 
-async function carregar(image_input) {
+ function carregar(image_input) {
     image_input.addEventListener("change", function(){
-        const reader = new FileReader();
-        reader.addEventListener("load", ()=>{
-            uploaded_image = reader.result;
-            document.querySelector("#display_image").style.backgroundImage = `url(${uploaded_image})`;
-        });
-        reader.readAsDataURL(this.files[0])
-    })
+       uploaded_image=[];
+        for(let i = 0; i < this.files.length; i++){
+            const reader = new FileReader();
+            reader.addEventListener("load", ()=>{
+               uploaded_image.push(reader.result);
+               console.log(uploaded_image)
+            });
+            reader.readAsDataURL(this.files[i])
+        }
+    });
 }
 
-console.log (uploaded_image)
+carregar(image_input)
