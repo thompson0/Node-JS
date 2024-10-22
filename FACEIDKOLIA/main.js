@@ -1,13 +1,10 @@
-//CHAMAR CAMERA DO HTML
 const cam = document.querySelector('#video');
 
-//PUXAR O MODELOS DA INTERNET PORQUE O LOCAL NAO TAVA FUNCIONANDO AI DEPOIS DE PUXAR LIGAR A CAMERA
 Promise.all([
     faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
     faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
     faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
     faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights'),
-    faceapi.nets.ssdMobilenetv1.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights')
 ]).then(startVideo).catch(err => console.error('Erro ao carregar modelos:', err));
 
 async function startVideo() {
@@ -24,33 +21,47 @@ async function startVideo() {
     }
 }
 
-//FACE RECONIGTION PARA ADICIONAR MAIS PESSOAS SO ADICIONAR MAIS UMA PASTA COM NOME DA PESSOA NA ARRAY E NA PASTA LABELS (MINIMO DE FOTOS 2, CASO  QUEIRA COLOCAR MAISS FOTOS PARAN UM PRECISAO MELHOR AUMENTE O NUMERO MAXIMO NO LOOP ABAIXO)
+const imageInput = document.querySelector("#image_input");
+let uploadedImages = [];
 
-async function loadLabeledImages() {
-    const labels = ['Thompson','Kaneto','JV','Guilherme','Nibo','Thomas'];
-    return Promise.all(
-        labels.map(async label => {
-            const descriptions = [];
-            for (let i = 1; i <= 2; i++) {
-                try {
-                    console.log(`Processando: ${label}/${i}.jpg`);
-                    const img = await faceapi.fetchImage(`/labels/${label}/${i}.jpg`);
-                    const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-                    if (detections) {
-                        descriptions.push(detections.descriptor);
-                    } else {
-                        console.error(`Nenhum rosto detectado na imagem: ${label}/${i}.jpg`);
-                    }
-                } catch (error) {
-                    console.error(`Erro ao carregar a imagem: ${label}/${i}.jpg`, error);
-                }
-            }
-            return new faceapi.LabeledFaceDescriptors(label, descriptions);
-        })
-    );
+function carregar(imageInput) {
+    imageInput.addEventListener("change", function() {
+        uploadedImages = [];
+        for (let i = 0; i < this.files.length; i++) {
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                uploadedImages.push(reader.result);
+                console.log(uploadedImages);
+            });
+            reader.readAsDataURL(this.files[i]);
+        }
+    });
 }
 
-//DESENHOS NO ROSTO NÁO TIREI PQ TAVA DANDO ERRADO FODASE DEPOIS EU VEJO
+carregar(imageInput);
+
+async function loadLabeledImages() {
+    const labels = ['Thompson'];
+    const descriptions = [];
+
+    for (const label of labels) {
+        for (let imgData of uploadedImages) {
+            try {
+                console.log(`Processando imagem para: ${label}`);
+                const img = await faceapi.fetchImage(imgData);
+                const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
+                if (detections) {
+                    descriptions.push(detections.descriptor);
+                } else {
+                    console.error(`Nenhum rosto detectado na imagem.`);
+                }
+            } catch (error) {
+                console.error(`Erro ao carregar a imagem.`, error);
+            }
+        }
+    }
+    return new faceapi.LabeledFaceDescriptors(labels[0], descriptions);
+}
 
 cam.addEventListener('play', async () => {
     const canvas = faceapi.createCanvasFromMedia(cam);
@@ -76,15 +87,13 @@ cam.addEventListener('play', async () => {
 
         if (resizedDetections.length > 0) {
             faceapi.draw.drawDetections(canvas, resizedDetections);
-            
-            faceapi.draw.drawFaceExpressions(canvas, resizedDetections); 
+            faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 
             resizedDetections.forEach(detection => {
                 const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
                 const box = detection.detection.box;
                 const text = bestMatch.toString();
 
-                
                 const drawBox = new faceapi.draw.DrawBox(box, { label: text });
                 drawBox.draw(canvas);
             });
