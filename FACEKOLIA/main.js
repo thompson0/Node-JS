@@ -26,14 +26,14 @@ async function startVideo() {
 
 // FACE RECOGNITION
 async function loadLabeledImages() {
-    const labels = ['Thompson', 'Kaneto', 'JV', 'Guilherme', 'Nibo', 'Thomas'];
+    const labels = ['Thompson'];
     return Promise.all(
         labels.map(async label => {
             const descriptions = [];
             for (let i = 1; i <= 2; i++) {
                 try {
                     console.log(`Processando: ${label}/${i}.jpg`);
-                    const img = await faceapi.fetchImage(`label/${label}/${i}.jpg`);  // Caminho corrigido
+                    const img = await faceapi.fetchImage(`label/${label}/${i}.jpg`); 
                     const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
                     if (detections) {
                         descriptions.push(detections.descriptor);
