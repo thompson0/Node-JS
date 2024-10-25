@@ -30,7 +30,7 @@ async function startVideo() {
     }
 }
 
-// Função para carregar imagens e associar rótulos (nomes)
+
 function carregar(imageInput) {
     imageInput.addEventListener("change", async function() {
         uploadedImages = [];
@@ -39,7 +39,7 @@ function carregar(imageInput) {
         // Carregar imagens
         for (let i = 0; i < this.files.length; i++) {
             const reader = new FileReader();
-            const fileName = this.files[i].name.split('.')[0]; // Usar o nome do arquivo como rótulo
+            const fileName = this.files[i].name.split('.')[0];
             uploadedLabels.push(fileName);
             reader.addEventListener("load", () => {
                 uploadedImages.push(reader.result);
@@ -53,7 +53,7 @@ function carregar(imageInput) {
             const labeledDescriptors = await loadLabeledImages();
             if (labeledDescriptors.length > 0) {
                 console.log('Imagens carregadas com sucesso. Iniciando a câmera...');
-                document.querySelector('#camera-section').style.display = 'block'; // Exibir a seção da câmera
+                document.querySelector('#camera-section').style.display = 'block'; 
                 startVideo(); // Iniciar a câmera
                 iniciarDeteccao(labeledDescriptors);
             } else {
@@ -70,8 +70,8 @@ async function loadLabeledImages() {
     const labeledDescriptors = [];
 
     for (let i = 0; i < uploadedImages.length; i++) {
-        const label = uploadedLabels[i]; // Nome da pessoa (rótulo)
-        const imgData = uploadedImages[i]; // Dados da imagem
+        const label = uploadedLabels[i]; 
+        const imgData = uploadedImages[i]; 
 
         try {
             console.log(`Processando imagem para: ${label}`);
