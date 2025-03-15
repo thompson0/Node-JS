@@ -1,21 +1,25 @@
-import express from "express";
-import conectaNaDataBase from "./config/dbconnect.js";
-import routes from "./routes/index.js";
+import express from "express"
+import routes from "./routes/index.js"
+import db from "./config/dbconnect.js"
 
-const conexao = await conectaNaDataBase();
+import manipuladorDeErros from "./middlewares/manipuladorDeErros.js"
+
+const conexao = db
 
 conexao.on("error", (erro)=>{
-    console.error("erro de conexao \n", erro)
-});
-
-conexao.once("open", ()=>{
-    console.log("conexao feita com sucesso")
+  console.error("erro de conexao \n", erro)
 })
 
-const app = express();
-routes(app);
+conexao.once("open", ()=>{
+  console.log("conexao feita com sucesso")
+})
 
-export default app;
+const app = express()
+routes(app)
+
+app.use(manipuladorDeErros)
+
+export default app
 
 
 
