@@ -2,7 +2,6 @@ import mongoose from "mongoose"
 import ErroBase from "../erros/ErroBase.js"
 import RequisaoIncorreta from "../erros/RequisicaoIncorreta.js"
 import ErroValidacao from "../erros/ErroValidacao.js"
-import NaoEncotrado from "../erros/NaoEncotrado.js"
 
 function manipuladorDeErros(erro,req,res,next) {
   if (erro instanceof mongoose.Error.CastError) {
@@ -11,7 +10,7 @@ function manipuladorDeErros(erro,req,res,next) {
   else if (erro instanceof mongoose.Error.ValidationError) {
    new ErroValidacao(erro).enviarResposta(res)
   }
-  else if(erro instanceof NaoEncotrado){
+  else if(erro instanceof ErroBase){
     erro.enviarResposta(res)
   }
   else{

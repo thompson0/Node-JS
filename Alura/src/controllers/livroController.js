@@ -1,13 +1,19 @@
 import {autor, livro} from "../models/index.js";
 import NaoEncotrado from "../erros/NaoEncotrado.js";
-import { populate } from "dotenv";
 
 class LivroController {
-
+  
   static async listarLivros(req, res, next) {
     try {
-      const listaLivros = await livro.find({});
-      res.status(200).json(listaLivros);
+   
+    const buscalivros = livro.find()
+
+    req.resultado = buscalivros;
+
+    next();
+    
+
+     
     } catch (erro) {
       next(erro);
     }
@@ -79,10 +85,12 @@ class LivroController {
       const busca = await processaBusca(req.query);
 
        if (busca !== null) {
-        const livrosPorResultado = await livro
+        const livrosPorResultado =  livro
         .find(busca)
         .populate("autores");  
-        res.status(200).send(livrosPorResultado); 
+
+        req.resultado = livrosPorResultado;
+        next() 
        }
        else {
        res.status(200).send([]);
