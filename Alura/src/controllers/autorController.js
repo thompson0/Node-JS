@@ -1,5 +1,5 @@
-import app from "../app.js"
-import { autor } from "../models/autor.js"
+import NaoEncotrado from "../erros/NaoEncotrado.js"
+import { autor } from "../models/index.js"
 
 class AutorController {
 
@@ -20,7 +20,7 @@ class AutorController {
         res.status(200).json(autorEncontrado)
       }
       else{
-        res.status(404).json({message: "falha na requicao do autor"})
+        next(new NaoEncotrado("falha na requicao do autor"));
       }
 
     } catch(erro){
@@ -40,9 +40,17 @@ class AutorController {
 
   static async atualizarAutor (req,res,next){
     try{
+      
       const id = req.params.id
-      await autor.findByIdAndUpdate(id, req.body)
-      res.status(200).json({message: "autor atualizado"})
+      const autorEncontrado = await autor.findByIdAndUpdate(id, req.body)
+      if (autorEncontrado !== null) {
+        res.status(200).json({message: "autor atualizado"})
+      }
+      else{
+        next(new NaoEncotrado("falha na requicao do autor"));
+      }
+      
+      
     } catch(erro){
       next(erro)
     }
@@ -51,7 +59,13 @@ class AutorController {
   static async deletarAutor (req,res,next){
     try{
       const id = req.params.id
-      await autor.findByIdAndDelete(id, req.body)
+      const autorEncontrado = await autor.findByIdAndDelete(id, req.body)
+      if (autorEncontrado !== null) {
+        res.status(200).json({message: "autor atualizado"})
+      }
+      else{
+        next(new NaoEncotrado("falha na requicao do autor"));
+      }
       res.status(200).json({message: "autor deletado"})
     } catch(erro){
       next(erro)
