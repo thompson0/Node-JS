@@ -6,6 +6,17 @@ class PessoaController  extends Controller {
         super(pessoaService)
     }
  
+
+    async  pegaMatriculas(req,res) {
+     const {estudanteid}  = req.params;
+        
+        try {
+            const listaMatriculas = await pessoaService.pegaMatriculasPorEstudante(Number (estudanteid))
+            return res.status(200).json(listaMatriculas)
+        } catch (error) {
+            
+        }
+    }
 };
 
 module.exports = PessoaController;
