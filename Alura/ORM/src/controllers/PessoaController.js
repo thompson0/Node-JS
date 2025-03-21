@@ -7,14 +7,41 @@ class PessoaController  extends Controller {
     }
  
 
-    async  pegaMatriculas(req,res) {
-     const {estudanteid}  = req.params;
+    async  pegaMatriculasAtivas(req,res) {
+     const {estudante_id}  = req.params;
         
         try {
-            const listaMatriculas = await pessoaService.pegaMatriculasPorEstudante(Number (estudanteid))
+            const listaMatriculas = await pessoaService.pegaMatriculasPorEstudante(Number (estudante_id))
             return res.status(200).json(listaMatriculas)
-        } catch (error) {
+        } catch (erro) {
+            return res.status(500).json({ 
+                erro: erro.message 
+            });
+        }
+    }
+    async  pegaMatriculas(req,res) {
+        const {estudante_id}  = req.params;
+           
+           try {
+               const listaMatriculas = await pessoaService.pegaMatriculasTodos(Number (estudante_id))
+               return res.status(200).json(listaMatriculas)
+           } catch (erro) {
+               return res.status(500).json({ 
+                   erro: erro.message 
+               });
+           }
+       }
+
+
+    async pegaTodasAsPessoas(req,res){
+        try {
+            const listaTodasAsPessoas = await pessoaService.pegaPessoasEscopoTodos();
+            return res.status(200).json(listaTodasAsPessoas)
             
+        } catch (erro) {
+            return res.status(500).json({ 
+                erro: erro.message 
+            });
         }
     }
 };

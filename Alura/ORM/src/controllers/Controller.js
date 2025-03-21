@@ -1,3 +1,6 @@
+const { where } = require('sequelize');
+const converteIds = require('../utils/conversorDeStringHelper.js');
+const { param } = require('../routes/pessoasRoutes.js');
 class Controller {
   constructor(entidadeService) {
       this.entidadeService = entidadeService;
@@ -7,12 +10,8 @@ class Controller {
       try {
           const listaDeRegistro = await this.entidadeService.pegaTodosOsRegistro();
           return res.status(200).json(listaDeRegistro);
-      } catch (error) {
-          console.error('Erro ao listar registros:', error);
-          return res.status(500).json({ 
-              message: 'erro interno do servidor',
-              error: error.message 
-          });
+      } catch (erro) {
+        return res.status(500).json({erro : erro.message})
       }
   }
 
@@ -20,76 +19,58 @@ class Controller {
       const { id } = req.params;
       const idNum = Number(id);
       try {
-          if (isNaN(idNum)) {
-              return res.status(400).json({ message: 'ID inválido. Deve ser um número.' });
-          }
           const umRegistro = await this.entidadeService.pegaUmRegistroPorId(idNum);
-          if (!umRegistro) {
-              return res.status(404).json({ message: 'Registro não encontrado' });
-          }
           return res.status(200).json(umRegistro);
-      } catch (error) {
-          console.error('Erro ao buscar registro por ID:', error);
-          return res.status(500).json({ 
-              message: 'erro interno do servidor',
-              error: error.message 
-          });
+      } catch (erro) {
+        return res.status(500).json({erro : erro.message})
       }
   }
+  async pegaUm(req, res) {
+    const { ...params } = req.params;
+    const where = converteIds(params)    
+     try {
+         const umRegistro = await this.entidadeService.pegaUmRegistro(where);
+         return res.status(200).json(umRegistro);
+     } catch (erro) {
+       return res.status(500).json({erro : erro.message})
+     }
+}
 
   async criaNovo(req, res) {
       const dadosParaCriacao = req.body;
       try {
           const novoRegistroCriado = await this.entidadeService.criaRegistro(dadosParaCriacao);
           return res.status(201).json(novoRegistroCriado);
-      } catch (error) {
-          console.error('Erro ao criar registro:', error);
-          return res.status(500).json({ 
-              message: 'erro interno do servidor',
-              error: error.message 
-          });
+      } catch (erro) {
+        return res.status(500).json({erro : erro.message})
       }
   }
 
   async atualiza(req, res) {
-      const { id } = req.params;
-      const idNum = Number(id);
+      const { ...params } = req.params;
+      const where = converteIds(params)
       const dadosAtualizados = req.body;
       try {
-          if (isNaN(idNum)) {
-              return res.status(400).json({ message: 'ID inválido. Deve ser um número.' });
+          const foiAtualizado = await this.entidadeService.atualizaRegistro(dadosAtualizados, where);
+          if (foiAtualizado) {
+            return res.status(200).json({ message: 'Atualizado com sucesso' });
           }
-          const foiAtualizado = await this.entidadeService.atualizaRegistro(dadosAtualizados, idNum);
-          if (!foiAtualizado) {
-              return res.status(404).json({ message: 'Registro não encontrado ou não atualizado' });
-          }
-          return res.status(200).json({ message: 'Atualizado com sucesso' });
-      } catch (error) {
-          console.error('Erro ao atualizar registro:', error);
-          return res.status(500).json({ 
-              message: 'erro interno do servidor',
-              error: error.message 
-          });
+          
+      } catch (erro) {
+        return res.status(500).json({erro : erro.message})
       }
   }
 
   async exclui(req, res) {
       const { id } = req.params;
-      const idNum = Number(id);
+     
       try {
-          if (isNaN(idNum)) {
-              return res.status(400).json({ message: 'ID inválido. Deve ser um número.' });
-          }
-          const resultado = await this.entidadeService.excluiRegistro(idNum);
-          if (!resultado) {
-              return res.status(404).json({ message: 'Registro não encontrado' });
-          }
-          return res.status(204).send(); // No content
-      } catch (error) {
-          console.error('Erro ao excluir registro:', error);
+       
+         await this.entidadeService.excluiRegistro(Number(id));
+          return res.status(200).json({mensagem: `id ${id} deletado com sucesso`}); 
+      } catch (erro) {
           return res.status(500).json({ 
-              message: 'erro interno do servidor',
-              error: error.message 
+              erro: erro.message 
           });
       }
   }
