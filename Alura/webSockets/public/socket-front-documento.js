@@ -1,4 +1,4 @@
-import { atualizaTextoEditor } from "./documento.js";
+import { alertarERedirecionar, atualizaTextoEditor } from "./documento.js";
 
 const socket = io()
 
@@ -15,5 +15,8 @@ function emitirTextoEditor(dados) {
 
 socket.on("texto_editor_clientes",(texto)=>{
     atualizaTextoEditor(texto)
+});
+socket.on("excluir_documento_sucesso",(nome)=>{
+    alertarERedirecionar(nome)
 });
 export {emitirTextoEditor , selecionar_documento}

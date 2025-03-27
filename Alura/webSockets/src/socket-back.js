@@ -1,53 +1,54 @@
+import { adicionarDocumento, atualizaDocumento, encontrarDocumento, excluirDocumento, obterDocumentos } from "./documentosDb.js";
 import io from "./servidor.js";
 
-const documentos = [
-{
-  nome:"JavaScript",
-  texto:"texto de JavaScript"
-},
-{
-  nome:"Node",
-  texto:"texto de Node"
-},
-{
-  nome:"Socket.io",
-  texto:"texto de socket.io..."
-},
-]
+
 
 io.on("connection", (socket) => {
-    console.log("Um cliente se conectou! ID:", socket.id);
+    socket.on("obter_documentos",async(devolverDocumentos)=>{
+      const documentos = await obterDocumentos()
+
+     devolverDocumentos(documentos)
+    })
     
-    socket.on("selecionar_documento",(nomeDocumento, devolverTexto)=>{
+    socket.on("adicionar_documento", async (nome)=>{
+      const documentoExiste = (await encontrarDocumento(nome)) !== null;
+
+      if(documentoExiste){
+        socket.emit("documento_existente", nome)
+      }
+      else{
+        const resultado = await adicionarDocumento(nome)
+
+        if(resultado.acknowledged){
+          io.emit("adicionar_documento_inferface",nome)
+        }
+      }
+
+      
+    });
+
+    socket.on("selecionar_documento", async (nomeDocumento, devolverTexto)=>{
       socket.join(nomeDocumento);
       
-      const documento = encontrarDocumento(nomeDocumento);
+      const documento = await encontrarDocumento(nomeDocumento);
       if(documento){
         devolverTexto(documento.texto)
 
       }
     });
 
-    socket.on("texto_editor", ({texto, nomeDocumentos})=>{
-      const documento = encontrarDocumento(nomeDocumentos)
-      if(documento  ){
-        documento.texto = texto
-        
-        socket.to(nomeDocumentos).emit("texto_editor_clientes",texto)
+    socket.on("texto_editor", async ({texto, nomeDocumentos})=>{
+      const atualizacao = await atualizaDocumento(nomeDocumentos,texto)
+       if(atualizacao){
+         socket.to(nomeDocumentos).emit("texto_editor_clientes",texto)
+       }
+
+    });
+    socket.on("excluir_documento", async (nome)=>{
+      const resultado = await excluirDocumento(nome)
+
+      if(resultado.deletedCount){
+        io.emit("excluir_documento_sucesso",nome)
       }
-
-    });
-    
-    socket.on("disconnect", (motivo) => {
-      console.log(`Cliente "${socket.id}" desconectado!
-      Motivo: ${motivo}`);
-    });
-  });
-
-function encontrarDocumento(nome) {
-  const documento = documentos.find((documento)=>{
-    return documento.nome === nome;
-  })
-
-  return documento
-}
+  }); 
+});
