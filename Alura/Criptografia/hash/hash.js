@@ -22,6 +22,7 @@ class Usuario{
     }
 }
 
+export default  Usuario
 
 
 const usuario = new Usuario('NomeUsuario1', 'senha123')
