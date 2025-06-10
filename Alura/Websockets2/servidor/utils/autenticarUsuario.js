@@ -1,13 +1,13 @@
-import { hash, scryptSync, timingSafeEqual } from "crypto"
-import { buffer } from "stream/consumers"
-function  autenticarUsuario(senhaDigita, usuario) {
-     const hashTeste = scryptSync(senhaDigita, usuario.salSenha, 64)
+import { scryptSync, timingSafeEqual } from "crypto";
 
-     const hashReal = Buffer.from(usuario.hashSenha, "hex")
+function autenticarUsuario(senhaDigitada, usuario) {
+  const hashTeste = scryptSync(senhaDigitada, usuario.salSenha, 64);
 
-     const autenticado = timingSafeEqual(hashTeste, hashReal)
+  const hashReal = Buffer.from(usuario.hashSenha, "hex");
 
-     return autenticado
+  const autenticado = timingSafeEqual(hashTeste, hashReal);
+
+  return autenticado;
 }
 
-export default autenticarUsuario
+export default autenticarUsuario;

@@ -1,11 +1,12 @@
-import {emitirAutenticarUsuario} from "./socket-front-loging.js";
-const form = document.getElementById("form-login")
+import { emitirAutenticarUsuario } from "./socket-front-login.js";
 
-form.addEventListener("submit",(evento)=>{
-    evento.preventDefault();
+const form = document.getElementById("form-login");
 
-    const nome = form["input-usuario"].value
-    const senha = form["input-senha"].value
+form.addEventListener("submit", (evento) => {
+  evento.preventDefault();
 
-    emitirAutenticarUsuario({nome, senha})
-})
+  const nome = form["input-usuario"].value;
+  const senha = form["input-senha"].value;
+
+  emitirAutenticarUsuario({ nome, senha });
+});
