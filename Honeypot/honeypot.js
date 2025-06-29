@@ -4,6 +4,9 @@ const PORT = 3000
 const sqlite3 = require('sqlite3').verbose()
 const winston = require('winston')
 const path = require('path')
+const fs = require('fs');
+const LOG_FILE = path.join(__dirname, 'logs.json');
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -35,7 +38,18 @@ app.use((req, res, next) => {
     headers: JSON.stringify(req.headers),
     query: JSON.stringify(req.query)
   };
-
+  
+  let logs = [];
+  if (fs.existsSync(LOG_FILE)) {
+    try {
+      const data = fs.readFileSync(LOG_FILE, 'utf8');
+      logs = JSON.parse(data);
+    } catch (e) {
+      logger.error('Erro ao ler logs.json');
+    }
+  }
+  logs.push(logData);
+  fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2));
   logger.info(`Acesso em ${logData.path} de ${logData.ip}`);
 
   db.run(
