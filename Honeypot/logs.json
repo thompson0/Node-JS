@@ -1,8 +1,28 @@
 [
   {
+    "id": "646143a4-0573-486c-9c43-735914ce834f",
     "ip": "::ffff:127.0.0.1",
+    "method": "GET",
     "path": "/",
-    "headers": "{\"host\":\"localhost:3000\",\"user-agent\":\"Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\",\"accept-language\":\"en-US,en;q=0.5\",\"accept-encoding\":\"gzip, deflate, br, zstd\",\"sec-gpc\":\"1\",\"connection\":\"keep-alive\",\"upgrade-insecure-requests\":\"1\",\"sec-fetch-dest\":\"document\",\"sec-fetch-mode\":\"navigate\",\"sec-fetch-site\":\"cross-site\",\"priority\":\"u=0, i\"}",
-    "query": "{}"
+    "headers": "{\"host\":\"localhost:3000\",\"user-agent\":\"Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\",\"accept-language\":\"en-US,en;q=0.5\",\"accept-encoding\":\"gzip, deflate, br, zstd\",\"sec-gpc\":\"1\",\"connection\":\"keep-alive\",\"upgrade-insecure-requests\":\"1\",\"sec-fetch-dest\":\"document\",\"sec-fetch-mode\":\"navigate\",\"sec-fetch-site\":\"none\",\"sec-fetch-user\":\"?1\",\"priority\":\"u=0, i\"}",
+    "query": "{}",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0",
+    "timestamp": "2025-07-31T17:30:15.426Z",
+    "device": "Other 0.0.0",
+    "os": "Linux 0.0.0",
+    "browser": "Firefox 138.0.0"
+  },
+  {
+    "id": "38f81bb1-51fa-4d3d-aa56-7de6dbd1ea02",
+    "ip": "::ffff:127.0.0.1",
+    "method": "GET",
+    "path": "/",
+    "headers": "{\"host\":\"localhost:3000\",\"user-agent\":\"Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\",\"accept-language\":\"en-US,en;q=0.5\",\"accept-encoding\":\"gzip, deflate, br, zstd\",\"sec-gpc\":\"1\",\"connection\":\"keep-alive\",\"upgrade-insecure-requests\":\"1\",\"sec-fetch-dest\":\"document\",\"sec-fetch-mode\":\"navigate\",\"sec-fetch-site\":\"none\",\"sec-fetch-user\":\"?1\",\"priority\":\"u=0, i\"}",
+    "query": "{}",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0",
+    "timestamp": "2025-07-31T17:30:26.530Z",
+    "device": "Other 0.0.0",
+    "os": "Linux 0.0.0",
+    "browser": "Firefox 138.0.0"
   }
 ]

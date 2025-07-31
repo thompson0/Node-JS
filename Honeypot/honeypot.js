@@ -2,7 +2,9 @@ const express = require('express')
 const app = express()
 const PORT = 3000
 const sqlite3 = require('sqlite3').verbose()
+const uuidv4 = require('uuid').v4;
 const winston = require('winston')
+const useragent = require('useragent');
 const path = require('path')
 const fs = require('fs');
 const LOG_FILE = path.join(__dirname, 'logs.json');
@@ -33,11 +35,23 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   const logData = {
-    ip: req.ip,
+    id: uuidv4(),
+    ip: req.headers['x-forwarded-for'] || req.ip,
+    method: req.method,
     path: req.originalUrl,
     headers: JSON.stringify(req.headers),
-    query: JSON.stringify(req.query)
+    query: JSON.stringify(req.query),
+    body: JSON.stringify(req.body),
+    userAgent: req.get('User-Agent'),
+    referer: req.get('Referer'),
+    cookies: JSON.stringify(req.cookies),
+    timestamp: new Date().toISOString()
   };
+
+  const agent = useragent.parse(req.headers['user-agent']);
+  logData.device = agent.device.toString();
+  logData.os = agent.os.toString();
+  logData.browser = agent.toAgent();
   
   let logs = [];
   if (fs.existsSync(LOG_FILE)) {
@@ -50,6 +64,7 @@ app.use((req, res, next) => {
   }
   logs.push(logData);
   fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2));
+  
   logger.info(`Acesso em ${logData.path} de ${logData.ip}`);
 
   db.run(
